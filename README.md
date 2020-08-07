@@ -250,10 +250,272 @@ $ npm i styled-components
 
   
 
+### polished의 스타일 관련 유틸 함수 사용하기
+
+CSS in JS에서 색상의 변화를 주는 유틸 함수를 사용하고 싶다면  polished 라는 라이브러리를 사용하면 된다.
+
+
+
+패키지  설치
+
+```bash
+$ npm i polished
+```
+
+
+
+기존 색상을 polished로 대체
+
+- Button.js
+
+  ```react
+  import React from "react";
+  import styled from "styled-components";
+  import { darken, lighten } from "polished";
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    font-size: 1rem;
+    height: 2.5rem;
+    /* 색상 */
+    background: #228be6;
+    &:hover {
+      background: ${lighten(0.1, "#228be6")}; // 1에 가까울수록 밝다.
+    }
+    &:active {
+      background: ${darken(0.1, "#228be6")}; // 1에 가까울수록 어둡다.
+    }
   
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, ...rest }) {
+    return <StyledButton {...rest}>{children}</StyledButton>;
+  }
+  
+  export default Button;
+  
+  ```
+
+  
+
+  색상 코드를 지닌 변수를 Button.js에서 선언하는 대신 ThemeProvider 라는 기능을 사용하여 styled-components로 만드는 모든 컴포넌트에서 조회하여 사용 할 수 있는 전역적인 값을 설정한다.
+
+- App.js
+
+  ```react
+  import React from 'react';
+  import styled, { ThemeProvider } from 'styled-components';
+  import Button from './components/Button';
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider
+        theme={{
+          palette: {
+            blue: '#228be6',
+            gray: '#495057',
+            pink: '#f06595'
+          }
+        }}
+      >
+        <AppBlock>
+          <Button>BUTTON</Button>
+        </AppBlock>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+
+  
+
+  theme을 설정하면 ThemeProvider 내부에 렌더링된 styled-components로 만든 컴포넌트에서 palette 를 조회하여 사용할 수 있다. Button 컴포넌트에서 palette.blue를 조회해보자.
+
+  
+
+- Button.js
+
+  ```react
+  import React from 'react';
+  import styled, { css } from 'styled-components';
+  import { darken, lighten } from 'polished';
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  
+    /* 크기 */
+    height: 2.25rem;
+    font-size: 1rem;
+  
+    /* 색상 */
+    ${props => {
+      const selected = props.theme.palette.blue;
+      return css`
+        background: ${selected};
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+      `;
+    }}
+  
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, ...rest }) {
+    return <StyledButton {...rest}>{children}</StyledButton>;
+  }
+  
+  export default Button;
+  ```
+
+  ThemeProvider로 설정한 값은 styled-components에서 props.theme로 조회할 수 있다. 지금은 selected 값을 무조건 blue 값으로 가리키게 했지만, Button 컴포넌트의 props를 통해 color를 받아오도록 수정한다.
+
+  
+
+- Button.js
+
+  ```react
+  import React from 'react';
+  import styled, { css } from 'styled-components';
+  import { darken, lighten } from 'polished';
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  
+    /* 크기 */
+    height: 2.25rem;
+    font-size: 1rem;
+  
+    /* 색상 */
+    ${props => {
+      const selected = props.theme.palette[props.color];
+      return css`
+        background: ${selected};
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+      `;
+    }}
+  
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, ...rest }) {
+    return <StyledButton {...rest}>{children}</StyledButton>;
+  }
+  
+  // props가 주어지지 않았을 때, 기본 props로 설정할 수 있다. 
+  Button.defaultProps = {
+    color: 'blue'
+  };
+  
+  export default Button;
+  ```
+
+  기본 값을 blue로 주었고 회색, 핑크색 버튼을 만들어 렌더링해보자.
+
+  
+
+- App.js
+
+  ```react
+  import React from 'react';
+  import styled, { ThemeProvider } from 'styled-components';
+  import Button from './components/Button';
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider
+        theme={{
+          palette: {
+            blue: '#228be6',
+            gray: '#495057',
+            pink: '#f06595'
+          }
+        }}
+      >
+        <AppBlock>
+          <Button>BUTTON</Button>
+          <Button color="pink">BUTTON</Button>
+          <Button color="gray">BUTTON</Button>
+        </AppBlock>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+
+  
+
+  ![5](images/5.png)
 
   
 
   
 
-  
+
+
+
+

@@ -1,6 +1,7 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { ThemeProvider } from "styled-components";
 import Button from "./components/Button.js";
+import theme from "./theme";
 
 const AppBlock = styled.div`
   width: 512px;
@@ -12,9 +13,13 @@ const AppBlock = styled.div`
 
 function App() {
   return (
-    <AppBlock>
-      <Button>BUTTON</Button>
-    </AppBlock>
+    <ThemeProvider theme={theme}>
+      <AppBlock>
+        <Button>BUTTON</Button>
+        <Button color="pink">BUTTON</Button>
+        <Button color="gray">BUTTON</Button>
+      </AppBlock>
+    </ThemeProvider>
   );
 }
 
