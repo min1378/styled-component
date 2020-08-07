@@ -1194,7 +1194,7 @@ $ npm i polished
   `fullWidth` 스타일을 가진 컴포넌트를 렌더링하자.
   
 - **App.js**
-  
+
   ```javascript
   import React from "react";
   import styled, { ThemeProvider } from "styled-components";
@@ -1270,15 +1270,498 @@ $ npm i polished
   
   export default App;
   ```
-  
+
   ![8](images/8.png)
+
+  
+
+### Dialog 만들기
+
+Dialog 컴포넌트를 만들자.
+
+이 컴포넌트를 만드는 과정에서 앞서 만든 Button 컴포넌트를 재사용하게 된다.
+
+- **components/Dialog.js**
+
+  ```javascript
+import React from 'react';
+  import styled from 'styled-components';
+import Button from './Button';
+  
+  const DarkBackground = styled.div`
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+  `;
+  
+  const DialogBlock = styled.div`
+    width: 320px;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 2px;
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1.125rem;
+    }
+  `;
+  
+  const ButtonGroup = styled.div`
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+  `;
+  
+  function Dialog({ title, children, confirmText, cancelText }) {
+    return (
+      <DarkBackground>
+        <DialogBlock>
+          <h3>{title}</h3>
+          <p>{children}</p>
+          <ButtonGroup>
+            <Button color="gray">{cancelText}</Button>
+            <Button color="pink">{confirmText}</Button>
+          </ButtonGroup>
+        </DialogBlock>
+      </DarkBackground>
+    );
+  }
+  
+  Dialog.defaultProps = {
+    confirmText: '확인',
+    cancelText: '취소'
+  };
+  
+  export default Dialog;
+  ```
   
   
   
+  h3 와 p를 스타일링 때  
+  
+  ```javascript
+  const Title = styled.h3``;
+  const Description = styled.p``;
+  ```
+  
+  위처럼 따로 컴포넌트를 만들지 않아도 styled-components에서 Nested CSS 문법을 사용할 수 있기 때문에, DialogBlock 안에 있는 h3와 p에게 특정  스타일을 주고 싶다면 다음과 같이 작성하면 된다.
+  
+  ```javascript
+  const DialogBlock = styled.div`
+  h3 {}
+  p {}
+  `
+  ```
   
   
   
+  이제 App에 렌더링을 해보자.
   
+  
+  
+- **App.js**
+  
+  ```javascript
+  import React from 'react';
+  import styled, { ThemeProvider } from 'styled-components';
+  import Button from './components/Button';
+  import Dialog from './components/Dialog';
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  
+  const ButtonGroup = styled.div`
+    & + & {
+      margin-top: 1rem;
+    }
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider
+        theme={{
+          palette: {
+            blue: '#228be6',
+            gray: '#495057',
+            pink: '#f06595'
+          }
+        }}
+      >
+        <>
+          <AppBlock>
+            <ButtonGroup>
+              <Button size="large">BUTTON</Button>
+              <Button>BUTTON</Button>
+              <Button size="small">BUTTON</Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button color="gray" size="large">
+                BUTTON
+              </Button>
+              <Button color="gray">BUTTON</Button>
+              <Button color="gray" size="small">
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button color="pink" size="large">
+                BUTTON
+              </Button>
+              <Button color="pink">BUTTON</Button>
+              <Button color="pink" size="small">
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button size="large" outline>
+                BUTTON
+              </Button>
+              <Button color="gray" outline>
+                BUTTON
+              </Button>
+              <Button color="pink" size="small" outline>
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button size="large" fullWidth>
+                BUTTON
+              </Button>
+              <Button size="large" color="gray" fullWidth>
+                BUTTON
+              </Button>
+              <Button size="large" color="pink" fullWidth>
+                BUTTON
+              </Button>
+            </ButtonGroup>
+          </AppBlock>
+          <Dialog
+            title="정말로 삭제하시겠습니까?"
+            confirmText="삭제"
+            cancelText="취소"
+          >
+            데이터를 정말로 삭제하시겠습니까?
+          </Dialog>
+        </>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+  
+  
+  
+  ![9](images/9.png)
+  
+  이 Dialog 에서는 취소 버튼과 삭제 버튼의 간격이 조금 넓어보이는 느낌이 있는데, 만약에 styled-components로 컴포넌트의 스타일을 특정 상황에서 덮어쓰는 방법에 대해서 알아보자.
+  
+  Dialog.js 에서 다음과 같이 ShortMarginButton 을 만들고 기존 Button 을 대체시켜 보자.
+  
+- **components/Dialog.js**
+
+  ```javascript
+  import React from 'react';
+  import styled from 'styled-components';
+  import Button from './Button';
+  
+  const DarkBackground = styled.div`
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+  `;
+  
+  const DialogBlock = styled.div`
+    width: 320px;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 2px;
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1.125rem;
+    }
+  `;
+  
+  const ButtonGroup = styled.div`
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+  `;
+  
+  const ShortMarginButton = styled(Button)`
+    & + & {
+      margin-left: 0.5rem;
+    }
+  `;
+  
+  function Dialog({ title, children, confirmText, cancelText }) {
+    return (
+      <DarkBackground>
+        <DialogBlock>
+          <h3>{title}</h3>
+          <p>{children}</p>
+          <ButtonGroup>
+            <ShortMarginButton color="gray">{cancelText}</ShortMarginButton>
+            <ShortMarginButton color="pink">{confirmText}</ShortMarginButton>
+          </ButtonGroup>
+        </DialogBlock>
+      </DarkBackground>
+    );
+  }
+  
+  Dialog.defaultProps = {
+    confirmText: '확인',
+    cancelText: '취소'
+  };
+  
+  export default Dialog;
+  ```
+
+  
+
+  ![10](images/10.png)
+
+  
+
+  적용하기 전보다 margin이 작아졌음을 확인할 수 있다. 이처럼  컴포넌트의 스타일을 커스터마이징 할 때에는 해당 컴포넌트에서 `className` props 를 내부 엘리먼트에게 전달이 되고 있는지 확인해주어야 한다.
+
+  ```javascript
+  const MyComponents = ({ className }) => {
+      return <div className={className}></div>
+  };
+  
+  const ExtendedComponent = styled(MyComponent)`
+  	background: black;
+  `
+  ```
+
+  우리가 만든 Button 컴포넌트의 경우에는 `...rest`를 통하여 전달되고 있다.
+
+  컴포넌트의 모양이 갖추어졌으니 열고 닫을 수 있는 기능을 구현하자. Dialog에서 `onConfirm`과 `onCancel`을 props로 받아오고 해당 함수들을 각 버튼에게 `onClick`으로 설정하자.
+
+  `visible`도 받아와 이 값이 `false`일 때 컴포넌트에서 `null` 을 반환하도록 설정한다.
+
+
+- **components/Dialog.js**
+
+  ```javascript
+  import React from 'react';
+  import styled from 'styled-components';
+  import Button from './Button';
+  
+  const DarkBackground = styled.div`
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+  `;
+  
+  const DialogBlock = styled.div`
+    width: 320px;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 2px;
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1.125rem;
+    }
+  `;
+  
+  const ButtonGroup = styled.div`
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+  `;
+  
+  const ShortMarginButton = styled(Button)`
+    & + & {
+      margin-left: 0.5rem;
+    }
+  `;
+  
+  function Dialog({
+    title,
+    children,
+    confirmText,
+    cancelText,
+    onConfirm,
+    onCancel,
+    visible
+  }) {
+    if (!visible) return null;
+    return (
+      <DarkBackground>
+        <DialogBlock>
+          <h3>{title}</h3>
+          <p>{children}</p>
+          <ButtonGroup>
+            <ShortMarginButton color="gray" onClick={onCancel}>
+              {cancelText}
+            </ShortMarginButton>
+            <ShortMarginButton color="pink" onClick={onConfirm}>
+              {confirmText}
+            </ShortMarginButton>
+          </ButtonGroup>
+        </DialogBlock>
+      </DarkBackground>
+    );
+  }
+  
+  Dialog.defaultProps = {
+    confirmText: '확인',
+    cancelText: '취소'
+  };
+  
+  export default Dialog;
+  ```
+
+  그 다음 App 컴포넌트에서 `useState`를 사용하여 Dialog의 상태를 관리하자.
+
+  
+
+- **App.js**
+
+  ```javascript
+  import React, { useState } from "react";
+  import styled, { ThemeProvider } from "styled-components";
+  import Button from "./components/Button";
+  import Dialog from "./components/Dialog";
+  import theme from "./theme";
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  const ButtonGroup = styled.div`
+    & + & {
+      margin-top: 1rem;
+    }
+  `;
+  
+  function App() {
+    const [dialog, setDialog] = useState(false);
+  
+    const onClick = () => {
+      setDialog(true);
+    };
+    const onConfirm = () => {
+      console.log("확인");
+      setDialog(false);
+    };
+    const onCancel = () => {
+      console.log("취소");
+      setDialog(false);
+    };
+  
+    return (
+      <>
+        <ThemeProvider theme={theme}>
+          <AppBlock>
+            <ButtonGroup>
+              <Button size="large">BUTTON</Button>
+              <Button>BUTTON</Button>
+              <Button size="small">BUTTON</Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button color="gray" size="large">
+                BUTTON
+              </Button>
+              <Button color="gray">BUTTON</Button>
+              <Button color="gray" size="small">
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button color="pink" size="large">
+                BUTTON
+              </Button>
+              <Button color="pink">BUTTON</Button>
+              <Button color="pink" size="small">
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button size="large" outline>
+                BUTTON
+              </Button>
+              <Button color="gray" outline>
+                BUTTON
+              </Button>
+              <Button color="pink" size="small" outline>
+                BUTTON
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <Button size="large" fullWidth>
+                BUTTON
+              </Button>
+              <Button size="large" color="gray" fullWidth>
+                BUTTON
+              </Button>
+              <Button size="large" color="pink" fullWidth>
+                BUTTON
+              </Button>
+              <Button size="large" color="pink" fullWidth onClick={onClick}>
+                삭제
+              </Button>
+            </ButtonGroup>
+          </AppBlock>
+          <Dialog
+            title="정말로 삭제하시겠습니까?"
+            confirmText="확인"
+            cancelText="취소"
+            onClick={onClick}
+            onConfirm={onConfirm}
+            onCancel={onCancel}
+            visible={dialog}
+          >
+            데이터를 정말로 삭제하시겠습니까?
+          </Dialog>
+        </ThemeProvider>
+      </>
+    );
+  }
+  
+  export default App;
+  ```
+
+  
+
+  ![11](images/11.png)
+
   
 
 
