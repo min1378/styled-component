@@ -195,3 +195,65 @@ $ npm i styled-components
 	
 	이런식으로 여러 줄의 CSS 코드를 조건부로 보여주고 싶다면 `css` 를 사용해야합니다., `css` 를 불러와서 사용을 해야 그 스타일 내부에서도 다른 `props` 를 조회 할 수 있습니다.
 
+
+
+### Button 만들기
+
+
+
+- components/Button.js
+
+  ```react
+  import React from "react";
+  import styled from "styled-components";
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    font-size: 1rem;
+    height: 2.5rem;
+    /* 색상 */
+    background: #228be6;
+    &:hover {
+      background: #339af0;
+    }
+    &:active {
+      background: #1c7ed6;
+    }
+  
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, ...rest }) {
+    return <StyledButton {...rest}>{children}</StyledButton>;
+  }
+  
+  export default Button;
+  ```
+
+  
+
+  ![4](images/4.png)
+
+  
+
+  
+
+  
+
+  
+
+  
