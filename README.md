@@ -102,7 +102,7 @@ $ npm i styled-components
 
 - **App.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled from "styled-components";
   
@@ -190,9 +190,9 @@ $ npm i styled-components
   
 
 	![3](images/3.png)
-	
+
 	props에 `huge`를 주고 `huge`가 있다면 css를 적용하도록 하였다.
-	
+
 	이런식으로 여러 줄의 CSS 코드를 조건부로 보여주고 싶다면 `css` 를 사용해야 한다.  `css` 를 불러와서 사용을 해야 그 스타일 내부에서도 다른 `props` 를 조회 할 수 있다.
 
 
@@ -203,7 +203,7 @@ $ npm i styled-components
 
 - **components/Button.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled from "styled-components";
   
@@ -268,7 +268,7 @@ $ npm i polished
 
 - **Button.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled from "styled-components";
   import { darken, lighten } from "polished";
@@ -316,7 +316,7 @@ $ npm i polished
 
 - **App.js**
 
-  ```react
+  ```javascript
   import React from 'react';
   import styled, { ThemeProvider } from 'styled-components';
   import Button from './components/Button';
@@ -358,7 +358,7 @@ $ npm i polished
 
 - **Button.js**
 
-  ```react
+  ```javascript
   import React from 'react';
   import styled, { css } from 'styled-components';
   import { darken, lighten } from 'polished';
@@ -412,7 +412,7 @@ $ npm i polished
 
 - **Button.js**
 
-  ```react
+  ```javascript
   import React from 'react';
   import styled, { css } from 'styled-components';
   import { darken, lighten } from 'polished';
@@ -471,7 +471,7 @@ $ npm i polished
 
 - **App.js**
 
-  ```react
+  ```javascript
   import React from 'react';
   import styled, { ThemeProvider } from 'styled-components';
   import Button from './components/Button';
@@ -521,7 +521,7 @@ $ npm i polished
 
 - **components/Button.js**
 
-  ```react
+  ```javascript
   import React from 'react';
   import styled, { css } from 'styled-components';
   import { darken, lighten } from 'polished';
@@ -582,7 +582,7 @@ $ npm i polished
 
 - **Button.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled, { css } from "styled-components";
   import { darken, lighten } from "polished";
@@ -653,7 +653,7 @@ $ npm i polished
 
 - **components/Button.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled, { css } from "styled-components";
   import { darken, lighten } from "polished";
@@ -743,7 +743,7 @@ $ npm i polished
 
 - **App.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled, { ThemeProvider } from "styled-components";
   import Button from "./components/Button.js";
@@ -805,7 +805,7 @@ $ npm i polished
 
 - **components/Button.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled, { css } from "styled-components";
   import { darken, lighten } from "polished";
@@ -896,7 +896,7 @@ $ npm i polished
   
 - **components/Button.js**
   
-  ```react
+  ```javascript
   import React from "react";
   import styled, { css } from "styled-components";
   import { darken, lighten } from "polished";
@@ -1000,7 +1000,7 @@ $ npm i polished
   
 - **App.js**
 
-  ```react
+  ```javascript
   import React from "react";
   import styled, { ThemeProvider } from "styled-components";
   import Button from "./components/Button.js";
@@ -1073,7 +1073,7 @@ $ npm i polished
 
 - **components/Button.js**
 
-  ```react
+  ```javascript
 import React from "react";
   import styled, { css } from "styled-components";
 import { darken, lighten } from "polished";
@@ -1195,7 +1195,7 @@ import { darken, lighten } from "polished";
   
 - **App.js**
   
-  ```react
+  ```javascript
   import React from "react";
   import styled, { ThemeProvider } from "styled-components";
   import Button from "./components/Button.js";
