@@ -88,5 +88,110 @@ sample 함수는 입력값을 texts와 fns으로 나누게 됩니다.  그다음
 
 
 
+### styled-components 사용하기
 
+개발환경 구성, styled-components 설치
+
+```bash
+$ create-react-app styling-with-styled-components
+$ cd styling-with-styled-components
+$ npm i styled-components
+```
+
+
+
+- App.js
+
+  ```react
+  import React from "react";
+  import styled from "styled-components";
+  
+  const Circle = styled.div`
+    width: 5rem;
+    height: 5rem;
+    background: black;
+    border-radius: 50%;
+  `;
+  
+  function App() {
+    return <Circle />;
+  }
+  
+  export default App;
+  ```
+
+  
+
+  ![1](images/1.png)
+
+  styled-components 를 통해 스타일을 입력하면서 해당 스타일을 가진 컴포넌트를 만들 수 있다.
+
+  props에 color 조건을 넣어 색을 바꿀 수 있다.
+
+  
+
+- App.js
+
+  ```javascript
+  import React from "react";
+  import styled from "styled-components";
+  
+  const Circle = styled.div`
+    width: 5rem;
+    height: 5rem;
+    background: ${(props) => props.color || "black"};
+    border-radius: 50%;
+  `;
+  
+  function App() {
+    return <Circle color="blue" />;
+  }
+  
+  export default App;
+  ```
+  
+  
+  
+  
+  
+  ![2](images/2.png)
+  
+  color에 blue 값을 주어 색을 바꿀 수 있게 되었다. 다음은 huge props를 설정하여 크기를 키우는 작업을 할 것이다.
+  
+- App.js
+  
+  ```javascript
+  import React from "react";
+  import styled, { css } from "styled-components";
+  
+  const Circle = styled.div`
+    width: 5rem;
+    height: 5rem;
+    background: ${(props) => props.color || "black"};
+    border-radius: 50%;
+    ${(props) =>
+      props.huge &&
+      css`
+        width: 10rem;
+        height: 10rem;
+      `}
+  `;
+  
+  const App = () => (
+    <>
+      <Circle color="blue" huge />
+      <Circle color="blue" />
+    </>
+  );
+  
+  export default App;
+  ```
+  
+  
+
+	![3](images/3.png)
+	
+	props에 huge를 주고 huge가 있다면 css를 적용하도록 하였다.
+	
+	이런식으로 여러 줄의 CSS 코드를 조건부로 보여주고 싶다면 `css` 를 사용해야합니다., `css` 를 불러와서 사용을 해야 그 스타일 내부에서도 다른 `props` 를 조회 할 수 있습니다.
 
