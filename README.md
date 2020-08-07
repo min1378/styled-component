@@ -1765,6 +1765,139 @@ import Button from './Button';
   
 
 
+### 트랜지션 구현하기
+
+트랜지션 효과를 적용 할 때에는 [CSS Keyframe](https://developer.mozilla.org/ko/docs/Web/CSS/@keyframes) 을 사용하며, styled-components 에서 이를 사용 할 때에는 [`keyframes`](https://www.styled-components.com/docs/api#keyframes) 라는 유틸을 사용한다.
+
+Dialog가 나타날 때 DarkBackground 쪽에는 서서히 나타나는 fadeIn 효과를 주고, DialogBlock 에는 아래에서부터 위로 올라오는 효과를 보여주는 slideUp 효과를 주겠다. 애니메이션의 이름은 여러분들이 마음대로 지정 할 수 있다.
 
 
 
+- **components/Dialog.js**
+
+  ```javascript
+  import React from "react";
+  import styled, { keyframes } from "styled-components";
+  import Button from "./Button";
+  
+  const fadeIn = keyframes`
+    from{
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  `;
+  
+  const slideUp = keyframes`
+    from {
+      transfrom: translateY(200px);
+    }
+    to{
+      transform: translateY(0px);
+    }
+  `;
+  
+  const DarkBackground = styled.div`
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.8);
+  
+    /* 애니메이션 효과 */
+    animation-duration: 0.25s;
+    animation-timing-function: ease-out;
+    animation-name: ${fadeIn};
+    animation-fill-mode: forwards;
+  `;
+  
+  const DialogBlock = styled.div`
+    width: 320px;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 2px;
+    h3 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    p {
+      font-size: 1.125rem;
+    }
+  
+    /* 애니메이션 효과 */
+    animation-duration: 0.25s;
+    animation-timing-function: ease-out;
+    animation-name: ${slideUp};
+    animation-fill-mode: forwards;
+  `;
+  
+  const ButtonGroup = styled.div`
+    margin-top: 3rem;
+    display: flex;
+    justify-content: flex-end;
+  `;
+  const ShortMarginButton = styled(Button)`
+    & + & {
+      margin-left: 0.5rem;
+    }
+  `;
+  const Dialog = ({
+    title,
+    children,
+    confirmText,
+    cancelText,
+    onConfirm,
+    onCancel,
+    visible,
+  }) => {
+    if (!visible) return null;
+    return (
+      <>
+        <DarkBackground>
+          <DialogBlock>
+            <h3>{title}</h3>
+            <p>{children}</p>
+            <ButtonGroup>
+              <ShortMarginButton color="gray" onClick={onCancel}>
+                {cancelText}
+              </ShortMarginButton>
+              <ShortMarginButton color="pink" onClick={onConfirm}>
+                {confirmText}
+              </ShortMarginButton>
+            </ButtonGroup>
+          </DialogBlock>
+        </DarkBackground>
+      </>
+    );
+  };
+  
+  Dialog.defaultProps = {
+    confirmText: "확인",
+    cancelText: "취소",
+  };
+  
+  export default Dialog;
+  ```
+
+  이렇게 하면 컴포넌트가 나타날 때 트랜지션 효과가 나타날 것입니다. 이제 사라지는 트랜지션 효과도 만들어볼건데요, 이는 구현하기 조금 까다롭지만, 원리만 알면 굉장히 쉽습니다.
+
+  사라지는 효과를 구현하려면 Dialog 컴포넌트에서 두개의 로컬 상태를 관리해주어야 합니다. 하나는 현재 트랜지션 효과를 보여주고 있는 중이라는 상태를 의미하는 `animate`, 나머지 하나는 실제로 컴포넌트가 사라지는 시점을 지연시키기 위한 `localVisible` 값입니다.
+
+  그리고 `useEffect` 를 하나 작성해주어야 하는데요, `visible` 값이 `true` 에서 `false` 로 바뀌는 시점을 감지하여 `animate` 값을 `true` 로 바꿔주고 `setTimeout` 함수를 사용하여 250ms 이후 `false`로 바꾸어 주어야 합니다.
+
+  추가적으로, `!visible` 조건에서 `null` 를 반환하는 대신에 `!animate && !localVisible` 조건에서 `null` 을 반환하도록 수정해주어야 합니다.
+
+  
+
+- **components/Dialog.js**
+
+  ```javascript
+  
+  ```
+
+  
