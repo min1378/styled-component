@@ -891,6 +891,395 @@ $ npm i polished
   
 
   이 다음에는 Button 컴포넌트에 `outline` 이라는 props를 설정하여 이 값이 `true`일 때 테두리만 지닌 버튼을 보여주도록 설정한다. 이 작업을 할 때는 `colorStyles`만 수정하면 된다.
+  
+  
+  
+- **components/Button.js**
+  
+  ```react
+  import React from "react";
+  import styled, { css } from "styled-components";
+  import { darken, lighten } from "polished";
+  
+  const colorStyles = css`
+    ${({ theme, color }) => {
+      const selected = theme.palette[color];
+      return css`
+        background: ${selected};
+  
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+        ${(props) =>
+          props.outline &&
+          css`
+            color: ${selected};
+            background: none;
+            border: 1px solid ${selected};
+            &:hover {
+              background: ${selected};
+              color: white;
+            }
+          `}
+      `;
+    }}
+  `;
+  
+  const sizes = {
+    large: {
+      height: "3rem",
+      fontSize: "1.25rem",
+    },
+    medium: {
+      height: "2.25rem",
+      fontSize: "1rem",
+    },
+    small: {
+      height: "1.75rem",
+      fontSize: "0.875rem",
+    },
+  };
+  
+  const sizeStyles = css`
+    ${({ size }) => css`
+      height: ${sizes[size].height};
+      font-size: ${sizes[size].fontSize};
+    `}
+  `;
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    ${sizeStyles}
+  
+    /* 색상 */
+    ${colorStyles}
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, color, size, ...rest }) {
+    return (
+      <StyledButton color={color} size={size} {...rest}>
+        {children}
+      </StyledButton>
+    );
+  }
+  
+  // 기본 Props 설정
+  Button.defaultProps = {
+    color: "blue",
+    size: "medium",
+  };
+  
+  export default Button;
+  ```
+  
+  `colorStyles`에서 outline의 여부에 따라 색을 바꾸는 작업을 하였다.
+  
+  App에서 outline 버튼을 렌더링하자.
+  
+  
+  
+  
+  
+- **App.js**
+
+  ```react
+  import React from "react";
+  import styled, { ThemeProvider } from "styled-components";
+  import Button from "./components/Button.js";
+  import theme from "./theme";
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  const ButtonGroup = styled.div`
+    & + & {
+      margin-top: 1rem;
+    }
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider theme={theme}>
+        <AppBlock>
+          <ButtonGroup>
+            <Button size="large">BUTTON</Button>
+            <Button>BUTTON</Button>
+            <Button size="small">BUTTON</Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="gray" size="large">
+              BUTTON
+            </Button>
+            <Button color="gray">BUTTON</Button>
+            <Button color="gray" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="pink" size="large">
+              BUTTON
+            </Button>
+            <Button color="pink">BUTTON</Button>
+            <Button color="pink" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+          <Button size="large" outline>
+            BUTTON
+          </Button>
+          <Button color="gray" outline>BUTTON</Button>
+          <Button color="pink" size="small" outline>
+            BUTTON
+          </Button>
+        </ButtonGroup>
+        </AppBlock>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+
+  ![7](images/7.png)
+
+  
+
+  이제 Button 컴포넌트에서 해야 할 마지막 작업이 한가지 더 남았다. `fullWidth` 라는 props 가 주어졌다면 버튼의 크기가 100% 를 차지하도록 만들어보자.
+
+  
+
+- **components/Button.js**
+
+  ```react
+import React from "react";
+  import styled, { css } from "styled-components";
+import { darken, lighten } from "polished";
+  
+  const colorStyles = css`
+    ${({ theme, color }) => {
+      const selected = theme.palette[color];
+      return css`
+        background: ${selected};
+  
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+        ${(props) =>
+          props.outline &&
+          css`
+            color: ${selected};
+            background: none;
+            border: 1px solid ${selected};
+            &:hover {
+              background: ${selected};
+              color: white;
+            }
+          `}
+      `;
+    }}
+  `;
+  
+  const sizes = {
+    large: {
+      height: "3rem",
+      fontSize: "1.25rem",
+    },
+    medium: {
+      height: "2.25rem",
+      fontSize: "1rem",
+    },
+    small: {
+      height: "1.75rem",
+      fontSize: "0.875rem",
+    },
+  };
+  
+  const sizeStyles = css`
+    ${({ size }) => css`
+      height: ${sizes[size].height};
+      font-size: ${sizes[size].fontSize};
+    `}
+  `;
+  
+  const fullWidthStyle = css`
+    ${(props) =>
+      props.fullWidth &&
+      css`
+        width: 100%;
+        justify-content: center;
+        & + & {
+          margin-left: 0;
+          margin-top: 1rem;
+        }
+      `}
+  `;
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    ${sizeStyles}
+  
+    /* 색상 */
+    ${colorStyles}
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  
+    ${fullWidthStyle}
+  `;
+  
+  function Button({ children, color, size, outline, fullWidth, ...rest }) {
+    return (
+      <StyledButton
+        color={color}
+        size={size}
+        outline={outline}
+        fullWidth={fullWidth}
+        {...rest}
+      >
+        {children}
+      </StyledButton>
+    );
+  }
+  
+  // 기본 Props 설정
+  Button.defaultProps = {
+    color: "blue",
+    size: "medium",
+  };
+  
+  export default Button;
+  
+  ```
+  
+  
+  
+  `fullWidth` 스타일을 가진 컴포넌트를 렌더링하자.
+  
+- **App.js**
+  
+  ```react
+  import React from "react";
+  import styled, { ThemeProvider } from "styled-components";
+  import Button from "./components/Button.js";
+  import theme from "./theme";
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  const ButtonGroup = styled.div`
+    & + & {
+      margin-top: 1rem;
+    }
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider theme={theme}>
+        <AppBlock>
+          <ButtonGroup>
+            <Button size="large">BUTTON</Button>
+            <Button>BUTTON</Button>
+            <Button size="small">BUTTON</Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="gray" size="large">
+              BUTTON
+            </Button>
+            <Button color="gray">BUTTON</Button>
+            <Button color="gray" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="pink" size="large">
+              BUTTON
+            </Button>
+            <Button color="pink">BUTTON</Button>
+            <Button color="pink" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button size="large" outline>
+              BUTTON
+            </Button>
+            <Button color="gray" outline>
+              BUTTON
+            </Button>
+            <Button color="pink" size="small" outline>
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button size="large" fullWidth>
+              BUTTON
+            </Button>
+            <Button size="large" color="gray" fullWidth>
+              BUTTON
+            </Button>
+            <Button size="large" color="pink" fullWidth>
+              BUTTON
+            </Button>
+          </ButtonGroup>
+        </AppBlock>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+  
+  ![8](images/8.png)
+  
+  
+  
+  
+  
+  
+  
+  
 
 
 
