@@ -515,6 +515,150 @@ $ npm i polished
 
   
 
+  Button 컴포넌트를 다음과 같이 리팩토링 할 수 있다.
+
+  
+
+- components/Button.js
+
+  ```react
+  import React from 'react';
+  import styled, { css } from 'styled-components';
+  import { darken, lighten } from 'polished';
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  
+    /* 크기 */
+    height: 2.25rem;
+    font-size: 1rem;
+  
+    /* 색상 */
+    // 비구조화 할당 문법을 사용하여 props에서 theme와 color를 빼내어 가독성을 높일 수 있다.
+    ${({ theme, color }) => {
+      const selected = theme.palette[color];
+      return css`
+        background: ${selected};
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+      `;
+    }}
+  
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, color, ...rest }) {
+    return <StyledButton color={color} {...rest}>{children}</StyledButton>;
+  }
+  
+  Button.defaultProps = {
+    color: 'blue'
+  };
+  
+  export default Button;
+  ```
+
+  
+
+  또 다음처럼 색상 관련 코드를 따로 분리하여 사용 할  수 있다.
+
+  
+
+- Button.js
+
+  ```react
+  import React from "react";
+  import styled, { css } from "styled-components";
+  import { darken, lighten } from "polished";
+  
+  const colorStyles = css`
+    ${({ theme, color }) => {
+      const selected = theme.palette[color];
+      return css`
+        background: ${selected};
+  
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+      `;
+    }}
+  `;
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    font-size: 1rem;
+    height: 2.25rem;
+  
+    /* 색상 */
+    // 색상관련 코드가 길어 따로 변수로 빼내어 관리한다.
+    ${colorStyles} 
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, color, ...rest }) {
+    return (
+      <StyledButton color={color} {...rest}>
+        {children}
+      </StyledButton>
+    );
+  }
+  
+  // 기본 Props 설정
+  Button.defaultProps = {
+    color: "blue",
+  };
+  
+  export default Button;
+  
+  ```
+
+  
+
+  그 다음에는, size props를 설정하여 버튼의 크기를 다양하게 만든다.
+
+  
+
+- components/Button.js
+
+  ```react
+  
+  ```
+
+  
+
 
 
 
