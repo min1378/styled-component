@@ -18,6 +18,27 @@ const colorStyles = css`
   }}
 `;
 
+const sizeStyles = css`
+  ${(props) =>
+    props.size === "large" &&
+    css`
+      height: 3rem;
+      font-size: 1.25rem;
+    `}
+  ${(props) =>
+    props.size === "medium" &&
+    css`
+      height: 2.25rem;
+      font-size: 1rem;
+    `}
+  ${(props) =>
+    props.size === "small" &&
+    css`
+      height: 1.75rem;
+      font-size: 0.875rem;
+    `}
+`;
+
 const StyledButton = styled.button`
   /* 공통 스타일 */
   display: inline-flex;
@@ -31,8 +52,7 @@ const StyledButton = styled.button`
   padding-left: 1rem;
   padding-right: 1rem;
   /* 크기 */
-  font-size: 1rem;
-  height: 2.25rem;
+  ${sizeStyles}
 
   /* 색상 */
   ${colorStyles}
@@ -42,9 +62,9 @@ const StyledButton = styled.button`
   }
 `;
 
-function Button({ children, color, ...rest }) {
+function Button({ children, color, size, ...rest }) {
   return (
-    <StyledButton color={color} {...rest}>
+    <StyledButton color={color} size={size} {...rest}>
       {children}
     </StyledButton>
   );
@@ -53,6 +73,7 @@ function Button({ children, color, ...rest }) {
 // 기본 Props 설정
 Button.defaultProps = {
   color: "blue",
+  size: "medium",
 };
 
 export default Button;

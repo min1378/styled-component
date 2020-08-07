@@ -654,8 +654,152 @@ $ npm i polished
 - components/Button.js
 
   ```react
+  import React from "react";
+  import styled, { css } from "styled-components";
+  import { darken, lighten } from "polished";
   
+  const colorStyles = css`
+    ${({ theme, color }) => {
+      const selected = theme.palette[color];
+      return css`
+        background: ${selected};
+  
+        &:hover {
+          background: ${lighten(0.1, selected)};
+        }
+        &:active {
+          background: ${darken(0.1, selected)};
+        }
+      `;
+    }}
+  `;
+  
+  const sizeStyles = css`
+    ${(props) =>
+      props.size === "large" &&
+      css`
+        height: 3rem;
+        font-size: 1.25rem;
+      `}
+    ${(props) =>
+      props.size === "medium" &&
+      css`
+        height: 2.25rem;
+        font-size: 1rem;
+      `}
+    ${(props) =>
+      props.size === "small" &&
+      css`
+        height: 1.75rem;
+        font-size: 0.875rem;
+      `}
+  `;
+  
+  const StyledButton = styled.button`
+    /* 공통 스타일 */
+    display: inline-flex;
+    outline: none;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    /* 크기 */
+    ${sizeStyles}
+  
+    /* 색상 */
+    ${colorStyles}
+    /* 기타 */
+    & + & {
+      margin-left: 1rem;
+    }
+  `;
+  
+  function Button({ children, color, size, ...rest }) {
+    return (
+      <StyledButton color={color} size={size} {...rest}>
+        {children}
+      </StyledButton>
+    );
+  }
+  
+  // 기본 Props 설정
+  Button.defaultProps = {
+    color: "blue",
+    size: "medium",
+  };
+  
+  export default Button;
   ```
+
+  `sizeStyles` 에 해당하는 코드를 따로 분리하지 않고 StyledButton 의 스타일 내부에 바로 적어도 상관은 없다. 다만, 이렇게 분리해두면 나중에 유지보수를 할 때 더 편해질 수 있다.
+
+  이제 커스터마이징된 버튼들을 렌더링하자.
+
+  
+
+- App.js
+
+  ```react
+  import React from "react";
+  import styled, { ThemeProvider } from "styled-components";
+  import Button from "./components/Button.js";
+  import theme from "./theme";
+  
+  const AppBlock = styled.div`
+    width: 512px;
+    margin: 0 auto;
+    margin-top: 4rem;
+    border: 1px solid black;
+    padding: 1rem;
+  `;
+  const ButtonGroup = styled.div`
+    & + & {
+      margin-top: 1rem;
+    }
+  `;
+  
+  function App() {
+    return (
+      <ThemeProvider theme={theme}>
+        <AppBlock>
+          <ButtonGroup>
+            <Button size="large">BUTTON</Button>
+            <Button>BUTTON</Button>
+            <Button size="small">BUTTON</Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="gray" size="large">
+              BUTTON
+            </Button>
+            <Button color="gray">BUTTON</Button>
+            <Button color="gray" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button color="pink" size="large">
+              BUTTON
+            </Button>
+            <Button color="pink">BUTTON</Button>
+            <Button color="pink" size="small">
+              BUTTON
+            </Button>
+          </ButtonGroup>
+        </AppBlock>
+      </ThemeProvider>
+    );
+  }
+  
+  export default App;
+  ```
+
+  ButtonGroup 컴포넌트를 통해 그룹간 여백을 1rem으로 설정.
+
+  ![6](images/6.png)
 
   
 
